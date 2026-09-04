@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en" class="bg-slate-950">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= pageTitle || 'Legal Metrology Compliance Platform' %></title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          },
+          colors: {
+            navy: '#0f2a54',
+            'navy-deep': '#0a1f42',
+            success: '#15803d',
+            warning: '#b45309',
+            danger: '#dc2626',
+          },
+        },
+      },
+    }
+  </script>
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    .conf-bar { transition: width .7s cubic-bezier(.22,1,.36,1); }
+    @keyframes ping { 75%,100% { transform: scale(2); opacity: 0; } }
+    .animate-ping { animation: ping 1.4s cubic-bezier(0,0,.2,1) infinite; }
+  </style>
+</head>
+<body class="min-h-screen bg-slate-100 text-slate-900">
+
+  <!-- Header -->
+  <header class="relative overflow-hidden bg-navy text-white">
+    <div class="pointer-events-none absolute inset-0 opacity-[0.07]"
+         style="background-image:linear-gradient(to right,#fff 1px,transparent 1px),linear-gradient(to bottom,#fff 1px,transparent 1px);background-size:44px 44px;"></div>
+    <div class="relative mx-auto flex max-w-6xl flex-col gap-6 px-5 py-8 md:px-8">
+      <div class="flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div class="flex items-center gap-4">
+          <div class="flex size-12 items-center justify-center rounded-xl bg-white/10 ring-1 ring-white/20 text-2xl">⚖️</div>
+          <div>
+            <h1 class="text-2xl font-extrabold leading-tight tracking-tight md:text-3xl">Legal Metrology Compliance Platform</h1>
+            <p class="mt-1 flex items-center gap-2 text-sm text-white/70">
+              <span class="rounded-md bg-white/10 px-2 py-0.5 font-mono text-xs">SIH26034</span>
+              Department of Consumer Affairs
+            </p>
+          </div>
+        </div>
+        <div class="flex items-center gap-2 rounded-full bg-white/10 px-3 py-1.5 text-xs font-medium ring-1 ring-white/15">
+          <span class="relative flex size-2">
+            <span class="absolute inline-flex size-full animate-ping rounded-full bg-emerald-400 opacity-75"></span>
+            <span class="relative inline-flex size-2 rounded-full bg-emerald-400"></span>
+          </span>
+          AI Engine Online
+        </div>
+      </div>
+      <nav class="flex flex-wrap gap-1.5" id="nav">
+        <a href="/" data-nav class="inline-flex items-center gap-2 rounded-lg bg-white px-4 py-2.5 text-sm font-semibold text-navy shadow-sm">New Inspection</a>
+        <a href="/repository" data-nav class="inline-flex items-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold text-white/80 hover:bg-white/10">Rule Repository</a>
+        <a href="/report" data-nav class="inline-flex items-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold text-white/80 hover:bg-white/10">View Reports</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="mx-auto max-w-6xl px-5 py-8 md:px-8">
+    <!-- Dynamic Stats strip -->
+    <div class="mb-8 grid grid-cols-2 gap-3 md:grid-cols-4">
+      <div class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+        <p class="font-mono text-2xl font-bold text-navy"><%= stats.totalInspections %></p><p class="text-xs text-slate-500">Inspections</p>
+      </div>
+      <div class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+        <p class="font-mono text-2xl font-bold text-success"><%= stats.complianceRate %>%</p><p class="text-xs text-slate-500">Compliance Rate</p>
+      </div>
+      <div class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+        <p class="font-mono text-2xl font-bold text-warning"><%= stats.pendingReview %></p><p class="text-xs text-slate-500">Pending Review</p>
+      </div>
+      <div class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+        <p class="font-mono text-2xl font-bold text-danger"><%= stats.noticesIssued %></p><p class="text-xs text-slate-500">Notices Issued</p>
+      </div>
+    </div>
+
+    <div class="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)]">
+      <!-- Intake -->
+      <section class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+        <div class="mb-5 flex items-center justify-between">
+          <div>
+            <h2 class="text-lg font-bold tracking-tight">Start New Inspection</h2>
+            <p class="text-sm text-slate-500">Choose an input source and let the AI extract declarations.</p>
+          </div>
+          <span class="text-navy text-xl">✨</span>
+        </div>
+
+        <div class="mb-5 grid grid-cols-2 gap-1 rounded-xl bg-slate-100 p-1">
+          <button data-mode="scan" class="mode-tab rounded-lg bg-white px-3 py-2 text-sm font-semibold shadow-sm">Physical Package</button>
+          <button data-mode="listing" class="mode-tab rounded-lg px-3 py-2 text-sm font-semibold text-slate-500">E-Commerce Listing</button>
+        </div>
+
+        <div id="pane-scan">
+          <label class="flex w-full cursor-pointer flex-col items-center gap-2 rounded-xl border-2 border-dashed border-slate-300 bg-slate-50 px-6 py-8 text-center hover:border-navy/50 hover:bg-slate-100">
+            <span class="text-3xl">☁️</span>
+            <span class="text-sm font-semibold">Drop package images or click to upload</span>
+            <span class="text-xs text-slate-500">PNG, JPG — multiple allowed</span>
+            <input id="fileInput" type="file" accept="image/*" multiple class="sr-only" />
+          </label>
+          <ul id="fileList" class="mt-3 flex flex-wrap gap-2"></ul>
+        </div>
+
+        <div id="pane-listing" class="hidden">
+          <label for="listingUrl" class="mb-2 block text-sm font-semibold">Product listing URL</label>
+          <div class="flex items-center gap-2 rounded-xl border border-slate-300 bg-white px-3 focus-within:ring-2 focus-within:ring-navy">
+            <span class="text-slate-400">🔗</span>
+            <input id="listingUrl" type="url" placeholder="https://marketplace.example/product/..." class="w-full bg-transparent py-3 text-sm outline-none" />
+          </div>
+        </div>
+
+        <button id="runBtn" disabled
+          class="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-navy px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:brightness-125 disabled:cursor-not-allowed disabled:opacity-50">
+          <span id="runLabel">✨ Run AI Scan</span>
+        </button>
+      </section>
+
+      <!-- Results -->
+      <div class="flex flex-col gap-6">
+        <!-- Extraction -->
+        <section class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+          <div class="mb-4 flex items-center gap-3">
+            <div class="flex size-9 items-center justify-center rounded-lg bg-navy/10 text-navy">🔍</div>
+            <div>
+              <h2 class="flex items-center gap-2 text-lg font-bold tracking-tight"><span class="font-mono text-sm text-slate-400">01</span>AI Perception: Extracted Declarations</h2>
+              <p class="text-sm text-slate-500">Fields detected from the source with model confidence.</p>
+            </div>
+          </div>
+          <div class="overflow-hidden rounded-xl border border-slate-200">
+            <div class="hidden grid-cols-[1.2fr_1.5fr_1.4fr] gap-4 bg-slate-100 px-4 py-2.5 text-xs font-semibold uppercase tracking-wide text-slate-500 sm:grid">
+              <span>Field Detected</span><span>Extracted Value</span><span>AI Confidence</span>
+            </div>
+            <ul id="fields" class="divide-y divide-slate-200"></ul>
+          </div>
+        </section>
+
+        <!-- Review -->
+        <section class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+          <h2 class="mb-4 flex items-center gap-2 text-lg font-bold tracking-tight"><span class="font-mono text-sm text-slate-400">02</span>Inspector Review &amp; Sign-off</h2>
+          
+          <!-- Dynamic Notice Area based on extracted fields (optional logic can be added here) -->
+          <div class="mb-5 flex items-start gap-3 rounded-xl border border-danger/30 bg-danger/5 p-4">
+            <div class="mt-0.5 flex size-8 items-center justify-center rounded-lg bg-danger/15 text-danger">⚠️</div>
+            <div>
+              <p class="flex flex-wrap items-center gap-2 font-semibold text-danger">Potential Violation
+                <span class="rounded-md bg-danger/15 px-2 py-0.5 font-mono text-xs">Rule 6(2)</span>
+              </p>
+              <p class="mt-1 text-sm text-slate-600">Consumer Care details are missing from the scanned images. This declaration is mandatory under the Legal Metrology (Packaged Commodities) Rules.</p>
+            </div>
+          </div>
+
+          <form action="/submit-inspection" method="POST">
+            <label for="comments" class="mb-2 block text-sm font-semibold">Inspector Comments</label>
+            <textarea id="comments" name="inspectorComments" rows="4" placeholder="Record observations, evidence references, or manufacturer response…"
+              class="w-full resize-y rounded-xl border border-slate-300 bg-white p-3 text-sm outline-none focus:ring-2 focus:ring-navy"></textarea>
+            
+            <input type="hidden" name="decision" id="decisionInput" value="">
+
+            <div class="mt-4 flex flex-wrap gap-2.5">
+              <button type="button" data-decision="notice" class="action-btn inline-flex items-center gap-2 rounded-xl bg-danger px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:brightness-110">⚖️ Issue Notice</button>
+              <button type="button" data-decision="review" class="action-btn inline-flex items-center gap-2 rounded-xl bg-warning px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:brightness-110">👁 Request Manual Review</button>
+              <button type="button" data-decision="compliant" class="action-btn inline-flex items-center gap-2 rounded-xl bg-success px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:brightness-110">✔ Mark as Compliant</button>
+            </div>
+          </form>
+
+          <div id="result" class="mt-4 hidden items-center gap-2 rounded-xl border px-4 py-3 text-sm font-medium"></div>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // Nav active state logic
+    document.querySelectorAll('[data-nav]').forEach(a => {
+      if (a.getAttribute('href') === window.location.pathname) {
+        document.querySelectorAll('[data-nav]').forEach(n => n.className = 'inline-flex items-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold text-white/80 hover:bg-white/10');
+        a.className = 'inline-flex items-center gap-2 rounded-lg bg-white px-4 py-2.5 text-sm font-semibold text-navy shadow-sm';
+      }
+    });
+
+    // Mode switch
+    let mode = 'scan';
+    const runBtn = document.getElementById('runBtn');
+    const runLabel = document.getElementById('runLabel');
+    function refreshRun() {
+      const ready = mode === 'scan'
+        ? document.getElementById('fileList').children.length > 0
+        : document.getElementById('listingUrl').value.trim().length > 0;
+      runBtn.disabled = !ready;
+    }
+    document.querySelectorAll('.mode-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        mode = tab.dataset.mode;
+        document.querySelectorAll('.mode-tab').forEach(t => {
+          const on = t.dataset.mode === mode;
+          t.className = 'mode-tab rounded-lg px-3 py-2 text-sm font-semibold ' + (on ? 'bg-white shadow-sm' : 'text-slate-500');
+        });
+        document.getElementById('pane-scan').classList.toggle('hidden', mode !== 'scan');
+        document.getElementById('pane-listing').classList.toggle('hidden', mode !== 'listing');
+        runLabel.textContent = mode === 'scan' ? '✨ Run AI Scan' : '✨ Extract Listing Data';
+        refreshRun();
+      });
+    });
+
+    // File input
+    document.getElementById('fileInput').addEventListener('change', e => {
+      const list = document.getElementById('fileList');
+      list.innerHTML = '';
+      Array.from(e.target.files).forEach(f => {
+        const li = document.createElement('li');
+        li.className = 'max-w-[12rem] truncate rounded-md bg-slate-100 px-2.5 py-1 text-xs font-medium';
+        li.textContent = f.name;
+        list.appendChild(li);
+      });
+      refreshRun();
+    });
+    document.getElementById('listingUrl').addEventListener('input', refreshRun);
+
+    // Extraction data injected directly from Express/Backend
+    const FIELDS = <%- JSON.stringify(fieldsData) %>;
+
+    function renderFields() {
+      const ul = document.getElementById('fields');
+      ul.innerHTML = '';
+      FIELDS.forEach((f, i) => {
+        const good = f.ok && f.conf >= 90;
+        const barColor = good ? 'bg-success' : 'bg-warning';
+        const chipColor = good ? 'bg-success/15 text-success' : 'bg-warning/20 text-warning';
+        const li = document.createElement('li');
+        li.className = 'grid grid-cols-1 gap-2 px-4 py-3.5 hover:bg-slate-50 sm:grid-cols-[1.2fr_1.5fr_1.4fr] sm:items-center sm:gap-4';
+        li.innerHTML = `
+          <span class="text-sm font-semibold">${f.field}</span>
+          <span class="text-sm ${f.ok ? '' : 'italic text-slate-400'}">${f.value}</span>
+          <div class="flex items-center gap-3">
+            <div class="h-2 flex-1 overflow-hidden rounded-full bg-slate-200">
+              <div class="conf-bar h-full rounded-full ${barColor}" style="width:0%"></div>
+            </div>
+            <span class="inline-flex min-w-[3.4rem] items-center justify-center gap-1 rounded-md px-1.5 py-0.5 font-mono text-xs font-semibold ${chipColor}">
+              ${f.ok ? '✓' : '⚠'} ${f.conf}%
+            </span>
+          </div>`;
+        ul.appendChild(li);
+        setTimeout(() => { li.querySelector('.conf-bar').style.width = f.conf + '%'; }, 120 * i + 120);
+      });
+    }
+
+    // Run scan animation
+    runBtn.addEventListener('click', () => {
+      runBtn.disabled = true;
+      runLabel.textContent = '⏳ Analyzing declarations…';
+      setTimeout(() => {
+        renderFields();
+        runLabel.textContent = mode === 'scan' ? '✨ Run AI Scan' : '✨ Extract Listing Data';
+        runBtn.disabled = false;
+        document.getElementById('fields').scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 1600);
+    });
+
+    // Form Decisions
+    const RESULT = {
+      notice: ['Violation notice issued for Rule 6(2).', 'border-danger/40 bg-danger/10 text-danger'],
+      review: ['Sent for manual review by a senior inspector.', 'border-warning/50 bg-warning/15 text-warning'],
+      compliant: ['Package marked as compliant.', 'border-success/40 bg-success/10 text-success'],
+    };
+    
+    document.querySelectorAll('.action-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const decision = btn.dataset.decision;
+        document.getElementById('decisionInput').value = decision;
+        
+        // Show result feedback before potential form submission
+        const [label, cls] = RESULT[decision];
+        const box = document.getElementById('result');
+        box.className = 'mt-4 flex items-center gap-2 rounded-xl border px-4 py-3 text-sm font-medium ' + cls;
+        box.textContent = '✔ ' + label;
+
+        // If you want to submit the form automatically, uncomment the next line:
+        // btn.closest('form').submit();
+      });
+    });
+
+    // Optional: Render fields initially if you want them visible right away 
+    // renderFields();
+  </script>
+</body>
+</html>

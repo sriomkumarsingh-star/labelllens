@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en" class="bg-slate-950">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Citizen Dashboard - Legal Metrology</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          },
+          colors: {
+            navy: '#0f2a54',
+            success: '#15803d',
+            warning: '#b45309',
+            danger: '#dc2626',
+          },
+        },
+      },
+    }
+  </script>
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    .conf-bar { transition: width .7s cubic-bezier(.22,1,.36,1); }
+  </style>
+</head>
+<body class="min-h-screen bg-slate-100 text-slate-900">
+
+  <header class="relative overflow-hidden bg-navy text-white">
+    <div class="pointer-events-none absolute inset-0 opacity-[0.07]"
+         style="background-image:linear-gradient(to right,#fff 1px,transparent 1px),linear-gradient(to bottom,#fff 1px,transparent 1px);background-size:44px 44px;"></div>
+    <div class="relative mx-auto flex max-w-6xl flex-col gap-6 px-5 py-8 md:px-8">
+      <div class="flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div class="flex items-center gap-4">
+          <div class="flex size-12 items-center justify-center rounded-xl bg-white/10 ring-1 ring-white/20 text-2xl">👤</div>
+          <div>
+            <h1 class="text-2xl font-extrabold leading-tight tracking-tight md:text-3xl">Citizen Submission Portal</h1>
+            <p class="mt-1 flex items-center gap-2 text-sm text-white/70">
+              Welcome back, Rahul Kumar (Citizen User)
+            </p>
+          </div>
+        </div>
+        <a href="landing.html" class="rounded-lg bg-white/10 px-4 py-2 text-sm font-semibold hover:bg-white/20">Logout</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="mx-auto max-w-6xl px-5 py-8 md:px-8">
+    
+    <div class="mb-8 grid grid-cols-2 gap-3 md:grid-cols-3">
+      <div class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+        <p class="font-mono text-2xl font-bold text-navy">12</p><p class="text-xs text-slate-500">Your Submissions</p>
+      </div>
+      <div class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+        <p class="font-mono text-2xl font-bold text-warning">2</p><p class="text-xs text-slate-500">Pending Department Review</p>
+      </div>
+      <div class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+        <p class="font-mono text-2xl font-bold text-success">10</p><p class="text-xs text-slate-500">Action Taken / Resolved</p>
+      </div>
+    </div>
+
+    <div class="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)]">
+      
+      <section class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+        <div class="mb-5 flex items-center justify-between">
+          <div>
+            <h2 class="text-lg font-bold tracking-tight">Submit a Package</h2>
+            <p class="text-sm text-slate-500">Upload clear photos of all sides of the packaging.</p>
+          </div>
+          <span class="text-navy text-xl">📸</span>
+        </div>
+
+        <div id="pane-scan">
+          <label class="flex w-full cursor-pointer flex-col items-center gap-2 rounded-xl border-2 border-dashed border-slate-300 bg-slate-50 px-6 py-10 text-center hover:border-navy/50 hover:bg-slate-100">
+            <span class="text-4xl mb-2">📥</span>
+            <span class="text-sm font-semibold">Tap to upload package photos</span>
+            <span class="text-xs text-slate-500">Please upload Front, Back, and Sides (PNG, JPG)</span>
+            <input id="fileInput" type="file" accept="image/*" multiple class="sr-only" />
+          </label>
+          <ul id="fileList" class="mt-3 flex flex-wrap gap-2"></ul>
+        </div>
+
+        <button id="runBtn" disabled
+          class="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-navy px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:brightness-125 disabled:cursor-not-allowed disabled:opacity-50">
+          <span id="runLabel">✨ Verify with AI</span>
+        </button>
+      </section>
+
+      <div class="flex flex-col gap-6">
+        
+        <section class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+          <div class="mb-4 flex items-center gap-3">
+            <div class="flex size-9 items-center justify-center rounded-lg bg-navy/10 text-navy">🔍</div>
+            <div>
+              <h2 class="text-lg font-bold tracking-tight">AI Preview</h2>
+              <p class="text-sm text-slate-500">This is what our system detected from your photos.</p>
+            </div>
+          </div>
+          <div class="overflow-hidden rounded-xl border border-slate-200">
+            <ul id="fields" class="divide-y divide-slate-200">
+              <li class="p-4 text-sm text-slate-500 text-center italic" id="emptyState">
+                Upload images and click "Verify with AI" to see extracted details.
+              </li>
+            </ul>
+          </div>
+        </section>
+
+        <section id="submissionSection" class="hidden rounded-2xl border-t-4 border-t-success border border-slate-200 bg-white p-6 shadow-sm">
+          <h2 class="mb-2 text-lg font-bold tracking-tight text-slate-800">Submit to Legal Metrology</h2>
+          <p class="text-sm text-slate-500 mb-4">Add any additional notes for the Inspector before submitting.</p>
+          
+          <label for="complaintNotes" class="mb-2 block text-sm font-semibold">Additional Remarks (Optional)</label>
+          <textarea id="complaintNotes" rows="3" placeholder="e.g. MRP seems tampered, purchased from local store..."
+            class="w-full resize-y rounded-xl border border-slate-300 bg-white p-3 text-sm outline-none focus:ring-2 focus:ring-navy mb-4"></textarea>
+          
+          <button id="finalSubmitBtn" class="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-success px-5 py-3 text-sm font-bold text-white shadow-sm transition hover:brightness-110">
+            📤 Send to Inspector Dashboard
+          </button>
+          
+          <div id="successMsg" class="mt-4 hidden rounded-xl bg-success/10 p-3 text-center text-sm font-semibold text-success border border-success/30">
+            ✅ Submission successful! An inspector will review your uploaded images.
+          </div>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const runBtn = document.getElementById('runBtn');
+    const runLabel = document.getElementById('runLabel');
+    const fileInput = document.getElementById('fileInput');
+    const submissionSection = document.getElementById('submissionSection');
+
+    // File input handler
+    fileInput.addEventListener('change', e => {
+      const list = document.getElementById('fileList');
+      list.innerHTML = '';
+      Array.from(e.target.files).forEach(f => {
+        const li = document.createElement('li');
+        li.className = 'max-w-[12rem] truncate rounded-md bg-slate-200 px-2.5 py-1 text-xs font-medium text-slate-700';
+        li.textContent = f.name;
+        list.appendChild(li);
+      });
+      runBtn.disabled = e.target.files.length === 0;
+    });
+
+    // Mock AI Data
+    const FIELDS = [
+      { field: 'Product Name', value: 'Premium Assam Tea', ok: true },
+      { field: 'Net Quantity', value: '500 g', ok: true },
+      { field: 'MRP', value: '₹ 245.00', ok: true },
+      { field: 'Consumer Care', value: 'Not Detected', ok: false },
+    ];
+
+    function renderFields() {
+      const ul = document.getElementById('fields');
+      ul.innerHTML = '';
+      FIELDS.forEach((f) => {
+        const icon = f.ok ? '<span class="text-success font-bold">✓</span>' : '<span class="text-danger font-bold">✗</span>';
+        const li = document.createElement('li');
+        li.className = 'flex justify-between items-center px-4 py-3 hover:bg-slate-50';
+        li.innerHTML = `
+          <span class="text-sm font-semibold">${f.field}</span>
+          <span class="text-sm flex items-center gap-2 ${f.ok ? 'text-slate-800' : 'text-danger italic'}">
+            ${f.value} ${icon}
+          </span>`;
+        ul.appendChild(li);
+      });
+    }
+
+    // Run AI Scan
+    runBtn.addEventListener('click', () => {
+      runBtn.disabled = true;
+      runLabel.textContent = '⏳ Processing Images...';
+      setTimeout(() => {
+        renderFields();
+        runLabel.textContent = '✨ AI Verification Complete';
+        submissionSection.classList.remove('hidden'); // Show submit button to user
+      }, 1500);
+    });
+
+    // Final Submit Button
+    document.getElementById('finalSubmitBtn').addEventListener('click', function() {
+      this.disabled = true;
+      this.innerHTML = 'Sending...';
+      setTimeout(() => {
+        this.classList.add('hidden');
+        document.getElementById('successMsg').classList.remove('hidden');
+      }, 1000);
+    });
+  </script>
+</body>
+</html>
