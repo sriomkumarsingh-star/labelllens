@@ -4,7 +4,15 @@ import { query } from './db.js';
 // 1. Route for the Landing / Login Page
 router.get('/', async(req, res) => {
 
-
+  console.log("ne");
+  await  query("INSERT INTO checking (name) VALUES ($1)", ["YourName"])
+      .then(result => {
+         console.log('Data inserted successfully:', result);
+      })
+      .catch(error => {
+         console.error('Error inserting data:', error);
+      });
+      console.log("done");
      
     const dashboardStats = {
         totalInspections: "1,284",
